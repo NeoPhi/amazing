@@ -1,0 +1,28 @@
+{
+  "name": "amazing",
+  "version": "0.1.0",
+  "description": "Amazing Algorithms",
+  "main": "index.js",
+  "scripts": {
+    "start": "DEBUG=* node src/server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/NeoPhi/amazing.git"
+  },
+  "author": "Daniel Rinehart <danielr@neophi.com>",
+  "license": "MIT",
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/NeoPhi/amazing/issues"
+  },
+  "dependencies": {
+    "express": "~3.3.4",
+    "debug": "~0.7.2",
+    "jade": "~0.34.1",
+    "underscore": "~1.5.1",
+    "request": "~2.25.0",
+    "ws": "~0.4.27",
+    "uuid": "~1.4.1"
+  }
+}

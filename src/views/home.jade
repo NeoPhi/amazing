@@ -1,0 +1,31 @@
+!!! 5
+html
+  head
+    title Amazing Algorithms
+    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+    link(href="/css/maze.css", rel="stylesheet", media="screen")
+  body
+    h1 Amazing Algorithms
+    p Connect at: ws://#{address}:#{port}
+    h2 Generators
+    p
+      select#generators
+      | width
+      input#width(type="text", value="20")
+      | legth
+      input#length(type="text", value="20")
+      button#generate Generate
+      button#refreshGenerators Refresh
+    h2 Solvers
+    p
+      select#solvers
+      button#solve Solve
+      button#refreshSolvers Refresh
+    div#maze
+    p
+      div#step
+      button#replay Replay
+      button#reset Reset
+    script(src="/js/jquery-1.9.1.js")
+    script(src="/js/underscore-1.4.4.js")
+    script(src="/js/maze.js")
