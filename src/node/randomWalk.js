@@ -1,9 +1,16 @@
 var _ = require('underscore');
 
+function RandomWalker() {
+  this.nextCalls = 0;
+}
+
+RandomWalker.prototype.next = function(room) {
+  this.nextCalls += 1;
+  return _.shuffle(room.exits)[0];  
+};
+
 function create() {
-  return function(room) {
-    return _.shuffle(room.exits)[0];
-  };
+  return new RandomWalker();
 }
 
 module.exports.name = 'randomWalk';

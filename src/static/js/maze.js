@@ -137,7 +137,7 @@
       type: 'POST',
       dataType: 'json',
       data: {
-        maze: currentMaze
+        maze: JSON.stringify(currentMaze)
       },
       url: '/solvers/' + name,
       success: function(path) {

@@ -7,7 +7,7 @@ module Solver
     end
   end
 
-  def create
+  def self.create
     return RandomWalker.new
   end
 end

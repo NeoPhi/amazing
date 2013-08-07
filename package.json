@@ -4,7 +4,8 @@
   "description": "Amazing Algorithms",
   "main": "index.js",
   "scripts": {
-    "start": "DEBUG=* node src/server/server.js"
+    "start": "DEBUG=* node src/server/server.js",
+    "test": "jasmine-node test/node"
   },
   "repository": {
     "type": "git",
@@ -24,5 +25,8 @@
     "request": "~2.25.0",
     "ws": "~0.4.27",
     "uuid": "~1.4.1"
+  },
+  "devDependecies": {
+    "jasmine-node": "~1.11.0"
   }
 }

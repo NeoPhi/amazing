@@ -89,7 +89,7 @@ var pending = {};
 
 app.post('/solvers/:name', function(req, res, next) {
   var name = req.params.name;
-  var maze = req.body.maze;
+  var maze = JSON.parse(req.body.maze);
   var id = uuid.v4();
   solvers.solve(name, id, maze, function(err) {
     if (err) {

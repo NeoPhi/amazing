@@ -10,6 +10,7 @@ Central server requires node.js
 ```
 npm install
 npm start
+open http://localhost:3000/
 ```
 
 Register a solver
@@ -33,6 +34,29 @@ Ruby
 ```
 bundle install
 ./ruby.sh ws://localhost:3000 src/ruby/random_walk.rb
+```
+
+Testing a solver
+==
+
+Node.js
+
+```
+npm install
+npm test
+```
+
+Java
+
+```
+mvn test
+```
+
+Ruby
+
+```
+bundle install
+bundle exec rspec test/ruby
 ```
 
 JSON

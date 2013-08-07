@@ -1,4 +1,3 @@
-var debug = require('debug')('register');
 var path = require('path');
 var _ = require('underscore');
 var WebSocket = require('ws');
@@ -38,14 +37,14 @@ var solverModule = require(path.resolve('./', solverPath));
 // https://github.com/einaros/ws
 var ws = new WebSocket(server);
 ws.on('open', function() {
-  debug('Registering %s', solverModule.name);
+  console.log('Registering %s', solverModule.name);
   ws.send(JSON.stringify({
     name: 'node:' + solverModule.name
   }), throwOnError);
 });
 
 function sendSolution(id, path) {
-  debug('Solved');
+  console.log('Solved');
   ws.send(JSON.stringify({
     id: id,
     path: path
@@ -53,7 +52,7 @@ function sendSolution(id, path) {
 }
 
 ws.on('message', function(data) {
-  debug('Solving');
+  console.log('Solving');
   var message = JSON.parse(data);
   var maze = message.maze;
   var rooms = {};
@@ -64,8 +63,9 @@ ws.on('message', function(data) {
   var solver = solverModule.create();
   var path = [currentRoom];
   while (!equal(currentRoom, maze.finish)) {
-    var nextRoom = solver(currentRoom);
+    var nextRoom = solver.next(currentRoom);
     if (!validNextRoom(currentRoom, nextRoom)) {
+      console.error('Bad exit %j -> %j', currentRoom, nextRoom);
       return sendSolution(message.id, []);
     }
     path.push(nextRoom);

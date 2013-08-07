@@ -3,10 +3,10 @@ if ARGV.length < 2
   exit 1
 end
 
-require 'rubygems'
-require 'bundler/setup'
-require 'web_socket'
-require 'json'
+require "rubygems"
+require "bundler/setup"
+require "web_socket"
+require "json"
 require ARGV[1]
 include Solver
 
@@ -56,6 +56,7 @@ while true
   while !equal(currentRoom, message["maze"]["finish"])
     nextRoom = solver.next(currentRoom);
     if !validNextRoom(currentRoom, nextRoom)
+      puts "Bad exit #{currentRoom} -> #{nextRoom}"
       sendSolution(client, message["id"], []);
       next
     end
