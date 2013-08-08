@@ -2,6 +2,8 @@
 
 Framework for playing with maze generation and solving algorithms.
 
+Right now the focus is on creating a maze solving algorithm, see below for examples. The results are displayed on a central server that solvers connect to which allows everyone to develop and test on their own laptops beforehand.
+
 ## Central server
 
 The central server maintains the list of maze generators and solvers and coordinates sending a generate maze to a solver and displaying the solution.
