@@ -60,9 +60,9 @@ bundle install
 bundle exec rspec src/test/ruby
 ```
 
-## Mazing solving algorithms
+## Maze solving algorithms
 
-### Random walker
+### Random Walker
 
 Randomly picks an exit.
 
@@ -72,7 +72,7 @@ Use either left-hand rule or right-hand rule.
 
 Keep one hand in contact with one wall of the maze and pick the exit which follows that rule.
 
-### Trémaux's
+### Trémaux
 
 A path is either unvisited, marked once, or marked twice.
 
