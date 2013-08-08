@@ -1,3 +1,3 @@
 #!/bin/bash
 
-/usr/bin/env node src/node/registerSolver.js "$1" "$2"
+/usr/bin/env node src/main/node/registerSolver.js "$1" "$2"

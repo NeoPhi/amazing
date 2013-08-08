@@ -1,6 +1,6 @@
 require "rubygems"
 require "bundler/setup"
-require File.join(File.dirname(__FILE__), "../../src/ruby/random_walk")
+require File.join(File.dirname(__FILE__), "../../main/ruby/random_walk")
 
 describe Solver do
   EXIT_1_0_0 = {

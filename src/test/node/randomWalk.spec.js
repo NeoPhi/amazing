@@ -1,6 +1,6 @@
 describe('randomWalk', function() {
   var _ = require('underscore');
-  var module = require('../../src/node/randomWalk');
+  var module = require('../../main/node/randomWalk');
   var solver;
   var room;
   var exit_1_0_0 = {

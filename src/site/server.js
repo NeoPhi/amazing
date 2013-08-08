@@ -36,18 +36,18 @@ function getAddress() {
 }
 var address = getAddress();
 
-app.use(express.favicon(path.join('src', 'static', 'favicon.ico')));
+app.use(express.favicon(path.join('src', 'site', 'static', 'favicon.ico')));
 app.use(express.logger('dev'));
 app.use(express.cookieParser());
 app.use(express.bodyParser());
 
-app.set('views', path.join('src', 'views'));
+app.set('views', path.join('src', 'site', 'views'));
 app.set('view engine', 'jade');
 app.set('view options', {
   layout: false
 });
 
-app.use(express.static(path.join('src', 'static')));
+app.use(express.static(path.join('src', 'site', 'static')));
 
 app.get('/', function(req, res) {
   res.render('home', {

@@ -8,7 +8,6 @@ require "bundler/setup"
 require "web_socket"
 require "json"
 require ARGV[1]
-include Solver
 
 def key(room)
   return [room["x"], room["y"], room["z"]].join("")
@@ -38,9 +37,9 @@ end
 # https://github.com/gimite/web-socket-ruby
 # http://flori.github.io/json/doc/index.html
 client = WebSocket.new(ARGV[0])
-puts "Registering #{NAME}"
+puts "Registering #{Solver::NAME}"
 client.send(JSON.generate({
-  :name => "ruby:" + NAME
+  :name => "ruby:" + Solver::NAME
 }))
 while true
   data = client.receive()
@@ -51,7 +50,7 @@ while true
     rooms[key(room)] = room
   end
   currentRoom = rooms[key(message["maze"]["start"])]
-  solver = create()
+  solver = Solver.create()
   path = [currentRoom]
   while !equal(currentRoom, message["maze"]["finish"])
     nextRoom = solver.next(currentRoom);
