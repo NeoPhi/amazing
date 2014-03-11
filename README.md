@@ -10,6 +10,8 @@ Test your solver locally before submitting it.
 
 ### Node.js
 
+Node uses [Jamine](http://jasmine.github.io/1.3/introduction.html) for testing.
+
 ```
 npm install
 npm test
@@ -17,11 +19,15 @@ npm test
 
 ### Java
 
+Java uses [JUnit](http://junit.org/) and [PowerMock](https://code.google.com/p/powermock/) for testing.
+
 ```
 mvn test
 ```
 
 ### Ruby
+
+Ruby uses [RSpec](http://rspec.info/) for testing.
 
 ```
 bundle install
@@ -30,7 +36,7 @@ bundle exec rspec src/test/ruby
 
 ## Register a solver
 
-Once a solver is complete you can register it with the central server for all to play with. NOTE: localhost is used as an example, the IP may vary.
+Once a solver is complete you can register it with the central server for all to play with. NOTE: localhost is used as an example, the projected central server shows the IP to connect to.
 
 ### Node.js
 
@@ -54,7 +60,7 @@ bundle install
 
 ## Central server
 
-The central server maintains the list of maze generators and solvers and coordinates sending a generate maze to a solver and displaying the solution.
+The central server maintains the list of maze generators and solvers and coordinates sending a generated maze to a solver and displaying the solution.
 
 ```
 npm install
@@ -73,20 +79,6 @@ Randomly picks an exit.
 Use either left-hand rule or right-hand rule. 
 
 Keep one hand in contact with one wall of the maze and pick the exit which follows that rule.
-
-### Trémaux
-
-A path is either unvisited, marked once, or marked twice.
-
-Every time a direction is chosen it is marked by drawing a line on the floor (from junction to junction).
-
-In the beginning a random direction is chosen (if there is more than one).
-
-On arriving at a junction that has not been visited before (no other marks), pick a random direction (and mark the path).
-
-When arriving at a marked junction and if your current path is marked only once then turn around and walk back (and mark the path a second time).
-
-If this is not the case, pick the direction with the fewest marks (and mark it, as always).
 
 ## JSON
 
