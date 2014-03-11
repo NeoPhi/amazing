@@ -18,11 +18,11 @@
     "url": "https://github.com/NeoPhi/amazing/issues"
   },
   "dependencies": {
-    "express": "~3.3.4",
+    "express": "~3.5.0",
     "debug": "~0.7.2",
-    "jade": "~0.34.1",
-    "underscore": "~1.5.1",
-    "request": "~2.25.0",
+    "jade": "~1.3.0",
+    "underscore": "~1.6.0",
+    "request": "~2.34.0",
     "ws": "~0.4.27",
     "uuid": "~1.4.1"
   },

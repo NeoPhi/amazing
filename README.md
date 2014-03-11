@@ -4,40 +4,6 @@ Framework for playing with maze generation and solving algorithms.
 
 Right now the focus is on creating a maze solving algorithm, see below for examples. The results are displayed on a central server that solvers connect to which allows everyone to develop and test on their own laptops beforehand.
 
-## Central server
-
-The central server maintains the list of maze generators and solvers and coordinates sending a generate maze to a solver and displaying the solution.
-
-```
-npm install
-npm start
-open http://localhost:3000/
-```
-
-## Register a solver
-
-Once a solver is complete you can register it with the central server for all to play with.
-
-### Node.js
-
-```
-npm install
-./node.sh ws://localhost:3000 src/main/node/randomWalk.js
-```
-
-### Java
-
-```
-./java.sh ws://localhost:3000 com.neophi.amazing.solver.RandomWalkSolverFactory
-```
-
-### Ruby
-
-```
-bundle install
-./ruby.sh ws://localhost:3000 src/main/ruby/random_walk.rb
-```
-
 ## Testing a solver
 
 Test your solver locally before submitting it.
@@ -60,6 +26,40 @@ mvn test
 ```
 bundle install
 bundle exec rspec src/test/ruby
+```
+
+## Register a solver
+
+Once a solver is complete you can register it with the central server for all to play with. NOTE: localhost is used as an example, the IP may vary.
+
+### Node.js
+
+```
+npm install
+./node.sh ws://localhost:3000 src/main/node/randomWalk.js
+```
+
+### Java
+
+```
+./java.sh ws://localhost:3000 com.neophi.amazing.solver.RandomWalkSolverFactory
+```
+
+### Ruby
+
+```
+bundle install
+./ruby.sh ws://localhost:3000 src/main/ruby/random_walk.rb
+```
+
+## Central server
+
+The central server maintains the list of maze generators and solvers and coordinates sending a generate maze to a solver and displaying the solution.
+
+```
+npm install
+npm start
+open http://localhost:3000/
 ```
 
 ## Maze solving algorithms

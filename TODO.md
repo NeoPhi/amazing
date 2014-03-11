@@ -5,4 +5,3 @@
 * Prevent duplicate name registration.
 * Support displaying multiple simulatenous solvers running.
 * Real-time update web interface when generators and solvers are registered and removed.
-
