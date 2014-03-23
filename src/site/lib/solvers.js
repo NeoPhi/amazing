@@ -2,6 +2,14 @@ var _ = require('underscore');
 
 var solvers = {};
 
+function validSolver(name, callback) {
+  if (!_.has(solvers, name)) {
+    process.nextTick(_.partial(callback, new Error(name + ' does not exist!')));
+    return false;
+  }
+  return true;
+}
+
 function register(name, ws, callback) {
   solvers[name] = ws;
   process.nextTick(callback);
@@ -18,18 +26,40 @@ function list(callback) {
   });
 }
 
-function solve(name, id, maze, callback) {
-  if (!_.has(solvers, name)) {
-    return process.nextTick(_.partial(callback, new Error(name + ' does not exist!')));
+function create(name, id, callback) {
+  if (!validSolver(name)) {
+    return;
   }
-  var ws = solvers[name];
-  ws.send(JSON.stringify({
+  solvers[name].send(JSON.stringify({
+    action: 'create',
+    id: id
+  }), callback);
+}
+
+function next(name, id, room, callback) {
+  if (!validSolver(name)) {
+    return;
+  }
+  solvers[name].send(JSON.stringify({
+    action: 'next',
     id: id,
-    maze: maze
+    room: room
+  }), callback);
+}
+
+function destroy(name, id, callback) {
+  if (!validSolver(name)) {
+    return;
+  }
+  solvers[name].send(JSON.stringify({
+    action: 'destroy',
+    id: id
   }), callback);
 }
 
 module.exports.register = register;
 module.exports.deregister = deregister;
 module.exports.list = list;
-module.exports.solve = solve;
+module.exports.create = create;
+module.exports.next = next;
+module.exports.destroy = destroy;

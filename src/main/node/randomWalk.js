@@ -6,7 +6,7 @@ function RandomWalker() {
 
 RandomWalker.prototype.next = function(room) {
   this.nextCalls += 1;
-  return _.shuffle(room.exits)[0];  
+  return _.shuffle(room.exits)[0];
 };
 
 function create() {

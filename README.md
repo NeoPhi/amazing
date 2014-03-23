@@ -6,7 +6,7 @@ Right now the focus is on creating a maze solving algorithm, see below for examp
 
 ## Testing a solver
 
-Test your solver locally before submitting it.
+Unit test your solver before submitting it.
 
 ### Node.js
 
@@ -70,9 +70,9 @@ open http://localhost:3000/
 
 ## Maze solving algorithms
 
-### Random Walker
+### Random Walk
 
-Randomly picks an exit.
+Randomly pick an exit.
 
 ### Wall Follower
 
@@ -82,28 +82,25 @@ Keep one hand in contact with one wall of the maze and pick the exit which follo
 
 ## JSON
 
+### Location
+
+A location is a hash with x, y, and z properties:
+
+```
+{
+  x: 0,
+  y: 0,
+  z: 0
+}
+```
+
 ### Solver output
 
-Maze solver output is an array of rooms visited in order:
-
-```
-[
-  {
-    x: 0,
-    y: 0,
-    z: 0
-  },
-  {
-    x: 1,
-    y: 0,
-    z: 0
-  }
-]
-```
+Maze solver next() output is the next location to visit, which must be one of the valid exits for the room.
 
 ### Generator output
 
-Maze generation output is an object with start and finish locations and an array of rooms each with a location and list of exit locations.
+Maze generation output is a hash with start and finish locations and an array of rooms each with a location and list of exit locations.
 
 ```
 {
@@ -189,6 +186,14 @@ Maze generation output is an object with start and finish locations and an array
 [http://weblog.jamisbuck.org/under-the-hood](http://weblog.jamisbuck.org/under-the-hood)
 
 [http://www.astrolog.org/labyrnth/algrithm.htm](http://www.astrolog.org/labyrnth/algrithm.htm)
+
+## Notes
+
+Newer version of Ruby on Mac OS X when running bundle install you might need:
+
+```
+ARCHFLAGS=-Wno-error=unused-command-line-argument-hard-error-in-future bundle install
+```
 
 ## License
 

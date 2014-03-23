@@ -87,16 +87,39 @@ app.get('/solvers/', function(req, res, next) {
 
 var pending = {};
 
+function createSolverCallback(id, res, next) {
+  pending[id] = res;
+  return function(err) {
+    if (err) {
+      delete pending[id];
+      next(err);
+    }
+  };
+}
+
 app.post('/solvers/:name', function(req, res, next) {
   var name = req.params.name;
-  var maze = JSON.parse(req.body.maze);
   var id = uuid.v4();
-  solvers.solve(name, id, maze, function(err) {
-    if (err) {
-      return next(err);
-    }
-    pending[id] = res;
-  });
+  solvers.create(name, id, createSolverCallback(id, res, next));
+});
+
+app.put('/solvers/:name/:id', function(req, res, next) {
+  var name = req.params.name;
+  var id = req.params.id;
+  var room = JSON.parse(req.body.room);
+  if (_.has(pending, id)) {
+    return next(new Error('Action already pending.'));
+  }
+  solvers.next(name, id, room, createSolverCallback(id, res, next));
+});
+
+app.del('/solvers/:name/:id', function(req, res, next) {
+  var name = req.params.name;
+  var id = req.params.id;
+  if (_.has(pending, id)) {
+    return next(new Error('Action already pending.'));
+  }
+  solvers.destroy(name, id, createSolverCallback(id, res, next));
 });
 
 var server = http.createServer(app);
@@ -113,17 +136,16 @@ wss.on('connection', function(ws) {
   var name;
   ws.on('message', function(data) {
     var message = JSON.parse(data);
-    if (message.name) {
+    if (message.action === 'solver.register') {
       name = message.name;
       debug('Registered solver %s', name);
       solvers.register(name, ws, throwOnError);
-    } else if (message.id) {
+    } else if (!name) {
+      warn('Message from unregistered solver');
+    } else {
       var id = message.id;
-      var path = message.path;
-      if (pending[id]) {
-        pending[id].json(path);
-        delete pending[id];        
-      }
+      pending[id].json(message);
+      delete pending[id];
     }
   });
   ws.on('close', function() {

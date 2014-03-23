@@ -1,26 +1,53 @@
+// TODO: NEEDS MAJOR REFACTORING
+// Solver management is too tied to visual upkeep
+// Need to introduce WS to handle being notified of solvers going away
+// Break up into multiple files
+// Reset solver state when new maze is generated
 (function() {
+  var Color = net.brehaut.Color;
+  var WHITE = Color('#FFFFFF');
   var currentMaze;
-  var currentPath;
-  var currentInterval;
+  var solvers = {};
+  var locations = {};
 
-  function resetAll() {
-    currentMaze = null;
-    $('#maze').html('Generating...');
-    resetPath();
+  function randomColor() {
+    return Color({
+      hue: Math.floor(Math.random() * 360),
+      saturation: Math.random(),
+      value: Math.random()
+    });
   }
 
-  function resetPath() {
-    stopAnimation();
-    currentPath = null;
+  function updateLocation(location) {
+    var currentColor = WHITE;
+    _.each(locations[location], function(color) {
+      currentColor = currentColor.blend(color, 0.5);
+    });
+    $('#' + location.replace(/,/g, '_')).css('backgroundColor', currentColor.toCSS());
   }
 
-  function stopAnimation() {
-    clearInterval(currentInterval);
-    $('#step').text('');
+  function addToLocation(id) {
+    var location = solvers[id].location;
+    if (!_.has(locations, location)) {
+      locations[location] = {};
+    }
+    locations[location][id] = solvers[id].color;
+    updateLocation(location);
+  }
+
+  function removeFromLocation(id) {
+    var location = solvers[id].location;
+    delete locations[location][id];
+    updateLocation(location);
   }
 
   function key(x, y, z) {
     return [x, y, z].join(',');
+  }
+
+  function resetAll() {
+    currentMaze = null;
+    $('#maze').html('Generating...');
   }
 
   function borders(room, rooms) {
@@ -54,7 +81,7 @@
       var exits = {};
       _.each(room.exits, function(exit) {
         exits[key(exit.x, exit.y, exit.z)] = exit;
-      });      
+      });
       if (!_.has(rooms, location) || !_.has(exits, location)) {
         classes.push(name);
       }
@@ -107,44 +134,147 @@
       url: '/generators/' + name + '?width=' + width + '&length=' + length,
       success: function(maze) {
         currentMaze = maze;
+        var roomLookup = {};
+        _.each(maze.rooms, function(room) {
+          roomLookup[key(room.x, room.y, room.z)] = room;
+        });
+        currentMaze.roomLookup = roomLookup;
         draw(maze);
       }
-    });    
+    });
   }
 
-  function animate(path) {
-    var index = 0;
-    var loction;
-    currentInterval = setInterval(function() {
-      if (index === path.length) {
-        clearInterval(currentInterval);
-        currentInterval = null;
-        return;
+  function destroy(id, callback) {
+    var solver = solvers[id];
+    $.ajax({
+      type: 'DELETE',
+      dataType: 'json',
+      data: {},
+      url: '/solvers/' + solver.name + '/' + id,
+      success: function(message) {
+        if (message.action !== 'destroyed') {
+          console.log(message);
+          return;
+        }
+        removeFromLocation(id);
+        if (callback) {
+          callback();
+        }
       }
-      if (loction) {
-        $(loction).removeClass('highlight');
-      }
-      var room = path[index];
-      loction = '#' + key(room.x, room.y, room.z).replace(/,/g, '_');
-      $(loction).addClass('highlight');
-      index += 1;
-      $('#step').text('Step ' + index + ' of ' + path.length);
-    }, 200);
+    });
   }
 
-  function solve(name) {
+  function next(id, callback) {
+    var solver = solvers[id];
+    var currentRoom = currentMaze.roomLookup[solver.location];
+    $.ajax({
+      type: 'PUT',
+      dataType: 'json',
+      data: {
+        room: JSON.stringify(currentRoom)
+      },
+      url: '/solvers/' + solver.name + '/' + id,
+      success: function(message) {
+        if (message.action !== 'next') {
+          console.log(message);
+          return;
+        }
+        removeFromLocation(id);
+        solvers[id].location = key(message.location.x, message.location.y, message.location.z);
+        addToLocation(id);
+        if (callback) {
+          callback();
+        }
+      }
+    });
+  }
+
+  function create(name) {
     $.ajax({
       type: 'POST',
       dataType: 'json',
-      data: {
-        maze: JSON.stringify(currentMaze)
-      },
+      data: {},
       url: '/solvers/' + name,
-      success: function(path) {
-        currentPath = path;
-        animate(path);
+      success: function(message) {
+        if (message.action !== 'created') {
+          console.log(message);
+          return;
+        }
+
+        var id = message.id;
+        var location = key(currentMaze.start.x, currentMaze.start.y, currentMaze.start.z);
+        var color = randomColor();
+
+        solvers[id] = {
+          name: name,
+          location: location,
+          color: color
+        };
+        addToLocation(id);
+
+        var div = $('<div>');
+
+        var finish = key(currentMaze.finish.x, currentMaze.finish.y, currentMaze.finish.z);
+
+        var updateState = function() {
+          var finished = (solvers[id].location === finish);
+          if (finished) {
+            animating = false;
+          }
+          nextButton.prop('disabled', animating || finished);
+          animateButton.prop('disabled', finished);
+          if (animating) {
+            animateButton.text('Stop');
+          } else {
+            animateButton.text('Animate');
+          }
+        };
+
+        var label = $('<span>');
+        label.append(name + ': ' + id);
+        label.css('background', WHITE.blend(color, 0.5).toCSS());
+        div.append(label);
+
+        var nextButton = $('<button>');
+        nextButton.append('Next');
+        nextButton.click(function() {
+          next(id, updateState);
+        });
+        div.append(nextButton);
+
+        var animating = false;
+        var animateButton = $('<button>');
+        animateButton.append('Animate');
+        animateButton.click(function() {
+          if (!animating) {
+            animating = true;
+            updateState();
+            var animate = function() {
+              updateState();
+              if (animating) {
+                next(id, animate);
+              }
+            };
+            animate();
+          } else {
+            animating = false;
+            updateState();
+          }
+        });
+        div.append(animateButton);
+
+        var destroyButton = $('<button>');
+        destroyButton.append('Destroy');
+        destroyButton.click(function() {
+          destroy(id, function() {
+            $(div).remove();
+          });
+        });
+        div.append(destroyButton);
+
+        $('#activeSolvers').append(div);
       }
-    });    
+    });
   }
 
   function fetchGenerators() {
@@ -174,7 +304,7 @@
           select.append($(option));
         });
       }
-    });    
+    });
   }
 
   $('#generate').click(function() {
@@ -185,36 +315,17 @@
     generate(name, width, length);
   });
 
-  $('#solve').click(function() {
+  $('#create').click(function() {
     if (!currentMaze) {
       return;
     }
-    resetPath();
-    draw(currentMaze);
     var name = $('#solvers').val();
-    solve(name);
-  });
-
-  $('#reset').click(function() {
-    if (!currentMaze) {
-      return;
-    }
-    stopAnimation();
-    draw(currentMaze);
-  });
-
-  $('#replay').click(function() {
-    if (!currentPath) {
-      return;
-    }
-    stopAnimation();
-    draw(currentMaze);
-    animate(currentPath);
+    create(name);
   });
 
   $('#refreshGenerators').click(fetchGenerators);
   $('#refreshSolvers').click(fetchSolvers);
-  
+
   fetchGenerators();
   fetchSolvers();
 }());
