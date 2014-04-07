@@ -26,7 +26,7 @@
     "ws": "~0.4.27",
     "uuid": "~1.4.1"
   },
-  "devDependecies": {
+  "devDependencies": {
     "jasmine-node": "~1.11.0"
   }
 }
