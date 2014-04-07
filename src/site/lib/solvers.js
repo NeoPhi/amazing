@@ -27,7 +27,7 @@ function list(callback) {
 }
 
 function create(name, id, callback) {
-  if (!validSolver(name)) {
+  if (!validSolver(name, callback)) {
     return;
   }
   solvers[name].send(JSON.stringify({
@@ -37,7 +37,7 @@ function create(name, id, callback) {
 }
 
 function next(name, id, room, callback) {
-  if (!validSolver(name)) {
+  if (!validSolver(name, callback)) {
     return;
   }
   solvers[name].send(JSON.stringify({
@@ -48,7 +48,7 @@ function next(name, id, room, callback) {
 }
 
 function destroy(name, id, callback) {
-  if (!validSolver(name)) {
+  if (!validSolver(name, callback)) {
     return;
   }
   solvers[name].send(JSON.stringify({

@@ -177,6 +177,9 @@
       success: function(message) {
         if (message.action !== 'next') {
           console.log(message);
+          if (callback) {
+            callback(message);
+          }
           return;
         }
         removeFromLocation(id);
@@ -184,6 +187,12 @@
         addToLocation(id);
         if (callback) {
           callback();
+        }
+      },
+      error: function(jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+        if (callback) {
+          callback(textStatus + ": " + errorThrown);
         }
       }
     });
@@ -216,8 +225,17 @@
 
         var finish = key(currentMaze.finish.x, currentMaze.finish.y, currentMaze.finish.z);
 
-        var updateState = function() {
+        var stepCount = 0;
+
+        var updateState = function(err) {
           var finished = (solvers[id].location === finish);
+          if (err) {
+            status.text(err);
+            finished = true;
+          } else {
+            stepCount += 1;
+            status.text('steps ' + stepCount);
+          }
           if (finished) {
             animating = false;
           }
@@ -266,11 +284,14 @@
         var destroyButton = $('<button>');
         destroyButton.append('Destroy');
         destroyButton.click(function() {
-          destroy(id, function() {
-            $(div).remove();
-          });
+          destroy(id);
+          $(div).remove();
         });
         div.append(destroyButton);
+
+        var status = $('<div>');
+        status.text('created');
+        div.append(status);
 
         $('#activeSolvers').append(div);
       }

@@ -13,6 +13,12 @@ function throwOnError(err) {
   }
 }
 
+function warnOnError(err) {
+  if (err) {
+    warn(err);
+  }
+}
+
 var generators = require('./lib/generators');
 var dfs = require('./lib/generator/depthFirstSearch');
 generators.register(dfs.name, dfs.generate, throwOnError);
@@ -131,15 +137,17 @@ server.listen(port, function(err) {
 var wss = new ws.Server({
   server: server
 });
+var clientCount = 0;
 wss.on('connection', function(ws) {
   debug('New web socket');
   var name;
   ws.on('message', function(data) {
     var message = JSON.parse(data);
     if (message.action === 'solver.register') {
-      name = message.name;
-      debug('Registered solver %s', name);
-      solvers.register(name, ws, throwOnError);
+      name = clientCount + ": " + message.name;
+      clientCount += 1;
+      debug('Registering solver %s', name);
+      solvers.register(name, ws, warnOnError);
     } else if (!name) {
       warn('Message from unregistered solver');
     } else {
@@ -150,8 +158,8 @@ wss.on('connection', function(ws) {
   });
   ws.on('close', function() {
     if (name) {
-      debug('Deregistered solver %s', name);
-      solvers.deregister(name, throwOnError);
+      debug('Deregistering solver %s', name);
+      solvers.deregister(name, warnOnError);
     }
   });
 });
