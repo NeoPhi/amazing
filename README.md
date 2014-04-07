@@ -14,6 +14,7 @@ Node uses [Jamine](http://jasmine.github.io/1.3/introduction.html) for testing.
 
 ```
 npm install
+npm install jasmine-node
 npm test
 ```
 
